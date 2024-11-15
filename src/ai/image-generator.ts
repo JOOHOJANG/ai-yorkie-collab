@@ -131,7 +131,7 @@ export class AIImageGenerator<T> {
       }),
     });
     const res = await response.json()
-    const query  = res.choices[0].content
+    const {content: query}  = res.choices[0].message
 
     console.log(res)
     const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
