@@ -25,15 +25,11 @@ const EMPTY_TEXT = {
  */
 export class AIImageGenerator<T> {
   _gptKey: string;
-  _searchKey: string;
-  _searchSecret: string;
   _doc: Document<T>;
   _client: Client;
   _initialized = false
-  constructor(gptKey: string, docKey: string, apiKey: string, host: string, searchKey: string, searchSecret: string) {
+  constructor(gptKey: string, docKey: string, apiKey: string, host: string) {
     this._gptKey = gptKey;
-    this._searchKey = searchKey;
-    this._searchSecret = searchSecret;
     this._doc = new Document(docKey, {
       disableGC: true,
     });
@@ -136,6 +132,8 @@ export class AIImageGenerator<T> {
     });
     const res = await response.json()
     const query  = res.choices[0].content
+
+    console.log(res)
     const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
         method: "POST",
         headers: {
