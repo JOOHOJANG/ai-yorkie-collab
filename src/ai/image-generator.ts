@@ -23,7 +23,7 @@ const EMPTY_TEXT = {
 /**
  * `AIWriter`
  */
-export class AIImageSearch<T> {
+export class AIImageGenerator<T> {
   _gptKey: string;
   _searchKey: string;
   _searchSecret: string;
@@ -74,8 +74,7 @@ export class AIImageSearch<T> {
       return;
     }
 
-    const {link} = res[0]
-    const {displayFormat, domain, fileName, fileSize, format, height, internalResource, originalHeight, originalWidth, path, width} = await imageUploader(link)
+    const {displayFormat, domain, fileName, fileSize, format, height, internalResource, originalHeight, originalWidth, path, width} = await imageUploader(res)
     const imageData = {
       attributes: {
         "@ctype": "image",
@@ -115,11 +114,11 @@ export class AIImageSearch<T> {
     this._client.changeSyncMode(this._doc, SyncMode.Realtime);
   }
 
-  private async _fetch(query: string) {
+  private async _fetch(context: string) {
     const messages = [
-      { role: 'system', content: '지금부터 내가 입력한 자연어를 검색 엔진에 맞는 용도로 바꿔줘야해. 그리고 모든 답변은 한국어로 해줘. 내가 무엇무엇을 검색해줘 라고 하면 그것을 검색창에 검색하기 위한 쿼리를 너가 만들어줘야해. 예를 들어 "발리 해변 사진 검색해줘" 라고 하면 "발리 해변 사진" 이라는 응답을 줘' },
+      { role: 'system', content: '지금부터 내가 입력하는 텍스트에서 키워드를 뽑아서 dall e 에서 사진 생성이 가능하도록 키워드를 뽑아줘' },
       {
-        role: "user", content: query
+        role: "user", content: context
       }
     ]
 
@@ -135,5 +134,28 @@ export class AIImageSearch<T> {
         temperature: 0.2, // 텍스트 정제는 창의성보다는 정확성이 중요하므로 낮은 온도를 설정
       }),
     });
+    const res = await response.json()
+    const query  = res.choices[0].content
+    const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this._gptKey}`
+        },
+        body: JSON.stringify({
+            prompt: query,
+            n: 1, // 이미지 개수
+            size: "1024x1024" // 이미지 크기
+        })
+    });
+
+    if (!imageResponse.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const imageUrl = data.data[0].url;
+
+    return imageUrl
   }
 }
