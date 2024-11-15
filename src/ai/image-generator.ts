@@ -148,10 +148,10 @@ export class AIImageGenerator<T> {
     });
 
     if (!imageResponse.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+        throw new Error(`Error: ${imageResponse.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await imageResponse.json();
     const imageUrl = data.data[0].url;
 
     return imageUrl
