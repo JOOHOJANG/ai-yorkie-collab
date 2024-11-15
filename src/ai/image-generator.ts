@@ -154,6 +154,7 @@ export class AIImageGenerator<T> {
     const data = await imageResponse.json();
     const imageUrl = data.data[0].url;
 
+    console.log(data)
     return imageUrl
   }
 }
