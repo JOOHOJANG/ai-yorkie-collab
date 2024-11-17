@@ -18,9 +18,9 @@ const EMPTY_PARA = {
 };
 type TRole = 'assistant' | 'user' | 'system';
 /**
- * `AIWriter`
+ * `AITranslator`
  */
-export class AIWriter<T> {
+export class AITranslator<T> {
   _gptKey: string;
 _initialized = false
   _messages: Array<{ role: TRole; content: string }> = [
