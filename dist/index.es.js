@@ -1,7 +1,7 @@
 var rt = Object.defineProperty;
 var st = (e, t, n) => t in e ? rt(e, t, { enumerable: !0, configurable: !0, writable: !0, value: n }) : e[t] = n;
-var S = (e, t, n) => st(e, typeof t != "symbol" ? t + "" : t, n);
-import { Document as V, Client as G, SyncMode as N } from "yorkie-js-sdk";
+var E = (e, t, n) => st(e, typeof t != "symbol" ? t + "" : t, n);
+import { Document as V, Client as G, SyncMode as x } from "yorkie-js-sdk";
 const ot = 150, Fe = {
   type: "paragraph",
   attributes: {
@@ -30,16 +30,16 @@ const ot = 150, Fe = {
 };
 class $n {
   constructor(t, n, r, s) {
-    S(this, "_gptKey");
-    S(this, "_initialized", !1);
-    S(this, "_messages", [
+    E(this, "_gptKey");
+    E(this, "_initialized", !1);
+    E(this, "_messages", [
       {
         role: "system",
         content: "모든 대답은 한국어로, 최소한 3개의 문단을 포함해야하며, 가능한 길게 대답해야해. 그리고 답변은 사람이 말하는것처럼 하지 말고, 보고서에 정리하는것처럼 해줘."
       }
     ]);
-    S(this, "_doc");
-    S(this, "_client");
+    E(this, "_doc");
+    E(this, "_client");
     this._gptKey = t, this._doc = new V(n, {
       disableGC: !0
     }), this._client = new G(`https://${s}`, {
@@ -63,15 +63,17 @@ class $n {
    *
    */
   async generate(t, n = "", r = 0) {
-    n.length && this._messages.push({
+    this._client.changeSyncMode(this._doc, x.RealtimePushOnly), n.length && this._messages.push({
       role: "system",
       content: `이제부터 내가 하는 모든 질문은 지금 내가 준 컨텍스트를 베이스에 두고 대답해줘야해. 다음줄부터 컨텍스트를 알려줄게. 
  ${n}`
     });
     const s = await this._fetch(t), { content: i } = s.choices[0].message;
-    if (!i.length)
+    if (!i.length) {
+      this._client.changeSyncMode(this._doc, x.Realtime);
       return;
-    this._client.changeSyncMode(this._doc, N.RealtimePushOnly), this._doc.update((f) => {
+    }
+    this._doc.update((f) => {
       f.text.editBulkByPath(
         [r],
         [r],
@@ -116,7 +118,7 @@ class $n {
         if (c < o.length)
           u();
         else
-          return this._client.changeSyncMode(this._doc, N.Realtime), this._doc.update((f, y) => {
+          return this._client.changeSyncMode(this._doc, x.Realtime), this._doc.update((f, y) => {
             y.set({ userId: "gpt" });
           }), Promise.resolve();
       }, ot);
@@ -153,11 +155,11 @@ function Le(e, t) {
 const { toString: ct } = Object.prototype, { getPrototypeOf: de } = Object, X = /* @__PURE__ */ ((e) => (t) => {
   const n = ct.call(t);
   return e[n] || (e[n] = n.slice(8, -1).toLowerCase());
-})(/* @__PURE__ */ Object.create(null)), x = (e) => (e = e.toLowerCase(), (t) => X(t) === e), Y = (e) => (t) => typeof t === e, { isArray: j } = Array, q = Y("undefined");
+})(/* @__PURE__ */ Object.create(null)), N = (e) => (e = e.toLowerCase(), (t) => X(t) === e), Y = (e) => (t) => typeof t === e, { isArray: j } = Array, q = Y("undefined");
 function lt(e) {
   return e !== null && !q(e) && e.constructor !== null && !q(e.constructor) && P(e.constructor.isBuffer) && e.constructor.isBuffer(e);
 }
-const De = x("ArrayBuffer");
+const De = N("ArrayBuffer");
 function ut(e) {
   let t;
   return typeof ArrayBuffer < "u" && ArrayBuffer.isView ? t = ArrayBuffer.isView(e) : t = e && e.buffer && De(e.buffer), t;
@@ -167,11 +169,11 @@ const ft = Y("string"), P = Y("function"), Ue = Y("number"), Q = (e) => e !== nu
     return !1;
   const t = de(e);
   return (t === null || t === Object.prototype || Object.getPrototypeOf(t) === null) && !(Symbol.toStringTag in e) && !(Symbol.iterator in e);
-}, ht = x("Date"), pt = x("File"), mt = x("Blob"), yt = x("FileList"), gt = (e) => Q(e) && P(e.pipe), wt = (e) => {
+}, ht = N("Date"), pt = N("File"), mt = N("Blob"), yt = N("FileList"), gt = (e) => Q(e) && P(e.pipe), wt = (e) => {
   let t;
   return e && (typeof FormData == "function" && e instanceof FormData || P(e.append) && ((t = X(e)) === "formdata" || // detect form-data instance
   t === "object" && P(e.toString) && e.toString() === "[object FormData]"));
-}, bt = x("URLSearchParams"), [Et, St, Rt, _t] = ["ReadableStream", "Request", "Response", "Headers"].map(x), Tt = (e) => e.trim ? e.trim() : e.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
+}, bt = N("URLSearchParams"), [St, Et, Rt, _t] = ["ReadableStream", "Request", "Response", "Headers"].map(N), Tt = (e) => e.trim ? e.trim() : e.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
 function z(e, t, { allOwnKeys: n = !1 } = {}) {
   if (e === null || typeof e > "u")
     return;
@@ -247,12 +249,12 @@ const Ot = (e, t, n, { allOwnKeys: r } = {}) => (z(t, (s, i) => {
   for (; (n = e.exec(t)) !== null; )
     r.push(n);
   return r;
-}, Dt = x("HTMLFormElement"), Ut = (e) => e.toLowerCase().replace(
+}, Dt = N("HTMLFormElement"), Ut = (e) => e.toLowerCase().replace(
   /[-_\s]([a-z\d])(\w*)/g,
   function(n, r, s) {
     return r.toUpperCase() + s;
   }
-), we = (({ hasOwnProperty: e }) => (t, n) => e.call(t, n))(Object.prototype), kt = x("RegExp"), Me = (e, t) => {
+), we = (({ hasOwnProperty: e }) => (t, n) => e.call(t, n))(Object.prototype), kt = N("RegExp"), Me = (e, t) => {
   const n = Object.getOwnPropertyDescriptors(e), r = {};
   z(n, (s, i) => {
     let o;
@@ -312,7 +314,7 @@ const vt = (e) => {
     return r;
   };
   return n(e, 0);
-}, $t = x("AsyncFunction"), Kt = (e) => e && (Q(e) || P(e)) && P(e.then) && P(e.catch), qe = ((e, t) => e ? setImmediate : t ? ((n, r) => (D.addEventListener("message", ({ source: s, data: i }) => {
+}, $t = N("AsyncFunction"), Kt = (e) => e && (Q(e) || P(e)) && P(e.then) && P(e.catch), qe = ((e, t) => e ? setImmediate : t ? ((n, r) => (D.addEventListener("message", ({ source: s, data: i }) => {
   s === D && i === n && r.length && r.shift()();
 }, !1), (s) => {
   r.push(s), D.postMessage(n, "*");
@@ -330,8 +332,8 @@ const vt = (e) => {
   isBoolean: dt,
   isObject: Q,
   isPlainObject: $,
-  isReadableStream: Et,
-  isRequest: St,
+  isReadableStream: St,
+  isRequest: Et,
   isResponse: Rt,
   isHeaders: _t,
   isUndefined: q,
@@ -352,7 +354,7 @@ const vt = (e) => {
   inherits: Pt,
   toFlatObject: xt,
   kindOf: X,
-  kindOfTest: x,
+  kindOfTest: N,
   endsWith: Nt,
   toArray: Ct,
   forEachEntry: Ft,
@@ -436,7 +438,7 @@ function ie(e) {
 function ve(e) {
   return a.endsWith(e, "[]") ? e.slice(0, -2) : e;
 }
-function Ee(e, t, n) {
+function Se(e, t, n) {
   return e ? e.concat(t).map(function(s, i) {
     return s = ve(s), !n && i ? "[" + s + "]" : s;
   }).join(n ? "." : "") : t;
@@ -477,12 +479,12 @@ function Z(e, t, n) {
         return m = ve(m), b.forEach(function(_, C) {
           !(a.isUndefined(_) || _ === null) && t.append(
             // eslint-disable-next-line no-nested-ternary
-            o === !0 ? Ee([m], C, i) : o === null ? m : m + "[]",
+            o === !0 ? Se([m], C, i) : o === null ? m : m + "[]",
             l(_)
           );
         }), !1;
     }
-    return ie(h) ? !0 : (t.append(Ee(p, m, i), l(h)), !1);
+    return ie(h) ? !0 : (t.append(Se(p, m, i), l(h)), !1);
   }
   const f = [], y = Object.assign(Gt, {
     defaultVisitor: u,
@@ -493,14 +495,14 @@ function Z(e, t, n) {
     if (!a.isUndefined(h)) {
       if (f.indexOf(h) !== -1)
         throw Error("Circular reference detected in " + m.join("."));
-      f.push(h), a.forEach(h, function(b, E) {
+      f.push(h), a.forEach(h, function(b, S) {
         (!(a.isUndefined(b) || b === null) && s.call(
           t,
           b,
-          a.isString(E) ? E.trim() : E,
+          a.isString(S) ? S.trim() : S,
           m,
           y
-        )) === !0 && w(b, m ? m.concat(E) : [E]);
+        )) === !0 && w(b, m ? m.concat(S) : [S]);
       }), f.pop();
     }
   }
@@ -508,7 +510,7 @@ function Z(e, t, n) {
     throw new TypeError("data must be an object");
   return w(e), t;
 }
-function Se(e) {
+function Ee(e) {
   const t = {
     "!": "%21",
     "'": "%27",
@@ -531,8 +533,8 @@ $e.append = function(t, n) {
 };
 $e.toString = function(t) {
   const n = t ? function(r) {
-    return t.call(this, r, Se);
-  } : Se;
+    return t.call(this, r, Ee);
+  } : Ee;
   return this._pairs.map(function(s) {
     return n(s[0]) + "=" + n(s[1]);
   }, "").join("&");
@@ -1050,7 +1052,7 @@ const J = (e, t, n = 3) => {
       return !0;
     };
   }()
-), En = O.hasStandardBrowserEnv ? (
+), Sn = O.hasStandardBrowserEnv ? (
   // Standard browser envs support document.cookie
   {
     write(e, t, n, r, s, i) {
@@ -1077,14 +1079,14 @@ const J = (e, t, n = 3) => {
     }
   }
 );
-function Sn(e) {
+function En(e) {
   return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(e);
 }
 function Rn(e, t) {
   return t ? e.replace(/\/?\/$/, "") + "/" + t.replace(/^\/+/, "") : e;
 }
 function Xe(e, t) {
-  return e && !Sn(t) ? Rn(e, t) : t;
+  return e && !En(t) ? Rn(e, t) : t;
 }
 const Ae = (e) => e instanceof A ? { ...e } : e;
 function k(e, t) {
@@ -1168,7 +1170,7 @@ const Ye = (e) => {
     }
   }
   if (O.hasStandardBrowserEnv && (r && a.isFunction(r) && (r = r(t)), r || r !== !1 && bn(t.url))) {
-    const l = s && i && En.read(i);
+    const l = s && i && Sn.read(i);
     l && o.set(s, l);
   }
   return t;
@@ -1222,9 +1224,9 @@ const Ye = (e) => {
     }), a.isUndefined(s.withCredentials) || (p.withCredentials = !!s.withCredentials), c && c !== "json" && (p.responseType = s.responseType), l && ([y, h] = J(l, !0), p.addEventListener("progress", y)), d && p.upload && ([f, w] = J(d), p.upload.addEventListener("progress", f), p.upload.addEventListener("loadend", w)), (s.cancelToken || s.signal) && (u = (_) => {
       p && (r(!_ || _.type ? new M(null, e, p) : _), p.abort(), p = null);
     }, s.cancelToken && s.cancelToken.subscribe(u), s.signal && (s.signal.aborted ? u() : s.signal.addEventListener("abort", u)));
-    const E = yn(s.url);
-    if (E && O.protocols.indexOf(E) === -1) {
-      r(new g("Unsupported protocol " + E + ":", g.ERR_BAD_REQUEST, e));
+    const S = yn(s.url);
+    if (S && O.protocols.indexOf(S) === -1) {
+      r(new g("Unsupported protocol " + S + ":", g.ERR_BAD_REQUEST, e));
       return;
     }
     p.send(i || null);
@@ -1399,32 +1401,32 @@ const Bn = async (e) => {
       duplex: "half",
       credentials: b ? f : void 0
     });
-    let E = await fetch(h);
+    let S = await fetch(h);
     const _ = ce && (l === "stream" || l === "response");
     if (ce && (c || _ && m)) {
       const T = {};
       ["status", "statusText", "headers"].forEach((ge) => {
-        T[ge] = E[ge];
+        T[ge] = S[ge];
       });
-      const B = a.toFiniteNumber(E.headers.get("content-length")), [L, v] = c && Te(
+      const B = a.toFiniteNumber(S.headers.get("content-length")), [L, v] = c && Te(
         B,
         J(Oe(c), !0)
       ) || [];
-      E = new Response(
-        Pe(E.body, xe, L, () => {
+      S = new Response(
+        Pe(S.body, xe, L, () => {
           v && v(), m && m();
         }),
         T
       );
     }
     l = l || "text";
-    let C = await W[a.findKey(W, l) || "text"](E, e);
+    let C = await W[a.findKey(W, l) || "text"](S, e);
     return !_ && m && m(), await new Promise((T, B) => {
       Ge(T, B, {
         data: C,
-        headers: A.from(E.headers),
-        status: E.status,
-        statusText: E.statusText,
+        headers: A.from(S.headers),
+        status: S.status,
+        statusText: S.statusText,
         config: e,
         request: h
       });
@@ -1867,12 +1869,12 @@ const Mn = {
 };
 class Kn {
   constructor(t, n, r, s, i, o) {
-    S(this, "_gptKey");
-    S(this, "_searchKey");
-    S(this, "_searchSecret");
-    S(this, "_doc");
-    S(this, "_client");
-    S(this, "_initialized", !1);
+    E(this, "_gptKey");
+    E(this, "_searchKey");
+    E(this, "_searchSecret");
+    E(this, "_doc");
+    E(this, "_client");
+    E(this, "_initialized", !1);
     this._gptKey = t, this._searchKey = i, this._searchSecret = o, this._doc = new V(n, {
       disableGC: !0
     }), this._client = new G(`https://${s}`, {
@@ -1896,10 +1898,10 @@ class Kn {
    *
    */
   async generate(t, n = 0, r) {
-    this._client.changeSyncMode(this._doc, N.RealtimePushOnly);
+    this._client.changeSyncMode(this._doc, x.RealtimePushOnly);
     const s = await this._fetch(t);
     if (!s.length) {
-      this._client.changeSyncMode(this._doc, N.Realtime);
+      this._client.changeSyncMode(this._doc, x.Realtime);
       return;
     }
     const { link: i } = s[0], { displayFormat: o, domain: c, fileName: d, fileSize: l, format: u, height: f, internalResource: y, originalHeight: w, originalWidth: h, path: m, width: p } = await r(i), b = {
@@ -1933,9 +1935,9 @@ class Kn {
       },
       children: [Mn]
     };
-    this._doc.update((E) => {
-      E.text.editByPath([n], [n], b);
-    }), this._client.changeSyncMode(this._doc, N.Realtime);
+    this._doc.update((S) => {
+      S.text.editByPath([n], [n], b);
+    }), this._client.changeSyncMode(this._doc, x.Realtime);
   }
   async _fetch(t) {
     const n = [
@@ -1992,10 +1994,10 @@ const In = {
 };
 class Jn {
   constructor(t, n, r, s) {
-    S(this, "_gptKey");
-    S(this, "_doc");
-    S(this, "_client");
-    S(this, "_initialized", !1);
+    E(this, "_gptKey");
+    E(this, "_doc");
+    E(this, "_client");
+    E(this, "_initialized", !1);
     this._gptKey = t, this._doc = new V(n, {
       disableGC: !0
     }), this._client = new G(`https://${s}`, {
@@ -2019,10 +2021,10 @@ class Jn {
    *
    */
   async generate(t, n = 0, r) {
-    this._client.changeSyncMode(this._doc, N.RealtimePushOnly);
+    this._client.changeSyncMode(this._doc, x.RealtimePushOnly);
     const s = await this._fetch(t);
     if (!s.length) {
-      this._client.changeSyncMode(this._doc, N.Realtime);
+      this._client.changeSyncMode(this._doc, x.Realtime);
       return;
     }
     const { displayFormat: i, domain: o, fileName: c, fileSize: d, format: l, height: u, internalResource: f, originalHeight: y, originalWidth: w, path: h, width: m } = await r(s), p = {
@@ -2058,7 +2060,7 @@ class Jn {
     };
     this._doc.update((b) => {
       b.text.editByPath([n], [n], p);
-    }), this._client.changeSyncMode(this._doc, N.Realtime);
+    }), this._client.changeSyncMode(this._doc, x.Realtime);
   }
   async _fetch(t) {
     const n = [
@@ -2118,16 +2120,16 @@ const qn = 150, zn = {
 };
 class Wn {
   constructor(t, n, r, s) {
-    S(this, "_gptKey");
-    S(this, "_initialized", !1);
-    S(this, "_messages", [
+    E(this, "_gptKey");
+    E(this, "_initialized", !1);
+    E(this, "_messages", [
       {
         role: "system",
         content: "지금부터 내가 입력하는 문장을 영어로 번역해줘. 너의 대답은 번역된 텍스트만 포함하고 있어야해. 다른 말은 추가하면 안돼. 그리고 너의 답변에 개행문자가 들어가면 안돼. 하나의 문장으로 답변해."
       }
     ]);
-    S(this, "_doc");
-    S(this, "_client");
+    E(this, "_doc");
+    E(this, "_client");
     this._gptKey = t, this._doc = new V(n, {
       disableGC: !0
     }), this._client = new G(`https://${s}`, {
@@ -2151,10 +2153,12 @@ class Wn {
    *
    */
   async generate(t, n) {
+    this._client.changeSyncMode(this._doc, x.RealtimePushOnly);
     const r = await this._fetch(t), { content: s } = r.choices[0].message;
-    if (!s.length)
+    if (!s.length) {
+      this._client.changeSyncMode(this._doc, x.Realtime);
       return;
-    this._client.changeSyncMode(this._doc, N.RealtimePushOnly);
+    }
     const i = s.split(`
 `).flatMap((f) => {
       let y = 0;
@@ -2195,7 +2199,7 @@ class Wn {
         if (o < i.length)
           u();
         else
-          return this._client.changeSyncMode(this._doc, N.Realtime), this._doc.update((f, y) => {
+          return this._client.changeSyncMode(this._doc, x.Realtime), this._doc.update((f, y) => {
             y.set({
               userId: "gpt",
               selections: [

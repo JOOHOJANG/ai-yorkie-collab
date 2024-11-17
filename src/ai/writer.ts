@@ -79,6 +79,7 @@ _initialized = false
    *
    */
   public async generate(query: string, context = '', compIndex = 0) {
+    this._client.changeSyncMode(this._doc, SyncMode.RealtimePushOnly);
     if (context.length) {
       this._messages.push({
         role: 'system',
@@ -91,10 +92,11 @@ _initialized = false
     const { content } = res.choices[0].message;
 
     if (!content.length) {
+        this._client.changeSyncMode(this._doc, SyncMode.Realtime);
+        
       return;
     }
-    this._client.changeSyncMode(this._doc, SyncMode.RealtimePushOnly);
-
+    
     this._doc.update((root) => {
       (root as any).text.editBulkByPath(
         [compIndex],

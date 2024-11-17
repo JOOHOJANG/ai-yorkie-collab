@@ -66,14 +66,17 @@ _initialized = false
    *
    */
   public async generate(query: string, path: number[]) {
+    this._client.changeSyncMode(this._doc, SyncMode.RealtimePushOnly);
     const res = await this._fetch(query);
     const { content } = res.choices[0].message;
 
     if (!content.length) {
+        this._client.changeSyncMode(this._doc, SyncMode.Realtime);
+
       return;
     }
 
-    this._client.changeSyncMode(this._doc, SyncMode.RealtimePushOnly);
+    
 
 
     const lines = (content as string).split('\n').flatMap((line) => {
