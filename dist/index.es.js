@@ -2097,7 +2097,8 @@ class Jn {
     });
     if (!o.ok)
       throw new Error(`Error: ${o.statusText}`);
-    return (await o.json()).data[0].url;
+    const c = await o.json(), d = c.data[0].url;
+    return console.log(c), d;
   }
 }
 export {
