@@ -2156,7 +2156,7 @@ class Vn {
    *
    */
   async generate(t, n) {
-    const s = `translator-${zn()}`;
+    const s = `translator-${zn()()}`;
     this._client.changeSyncMode(this._doc, O.RealtimePushOnly);
     const r = await this._fetch(t), { content: i } = r.choices[0].message;
     if (!i.length) {

@@ -73,7 +73,7 @@ _initialized = false
    *
    */
   public async generate(query: string, path: number[]) {
-    const name = `translator-${naming()}`;
+    const name = `translator-${naming()()}`;
     this._client.changeSyncMode(this._doc, SyncMode.RealtimePushOnly);
     const res = await this._fetch(query);
     const { content } = res.choices[0].message;
