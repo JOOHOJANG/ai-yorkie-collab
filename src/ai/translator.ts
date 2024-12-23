@@ -1,5 +1,12 @@
 import { Document, Client, SyncMode } from 'yorkie-js-sdk';
 
+const naming = () => {
+    let count = 1;
+    return () => {
+        return count++;
+    }
+}
+
 const DELAY = 150;
 const EMPTY_PARA = {
   type: 'paragraph',
@@ -66,6 +73,7 @@ _initialized = false
    *
    */
   public async generate(query: string, path: number[]) {
+    const name = `translator-${naming()}`;
     this._client.changeSyncMode(this._doc, SyncMode.RealtimePushOnly);
     const res = await this._fetch(query);
     const { content } = res.choices[0].message;
@@ -125,7 +133,7 @@ _initialized = false
               selections: [
                 (root as any).text.pathRangeToPosRange([newPath, newPath]),
               ],
-              userId: 'translator',
+              userId: name,
             });
 
             textIndex += lines[index].length;
@@ -141,7 +149,7 @@ _initialized = false
           this._client.changeSyncMode(this._doc, SyncMode.Realtime);
           this._doc.update((root, presence) => {
             presence.set({ 
-                userId: 'gpt', 
+                userId: name,
                 selections: [
                 (root as any).text.pathRangeToPosRange([[0,0,0,0,0],[0,0,0,0,0]]),
               ]});
