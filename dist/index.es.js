@@ -2144,9 +2144,7 @@ class Vn {
     if (this._initialized)
       return Promise.resolve();
     try {
-      await this._client.activate(), await this._client.attach(this._doc, {
-        initialPresence: { userId: "translator" }
-      }), this._initialized = !0;
+      await this._client.activate(), await this._client.attach(this._doc), this._initialized = !0;
     } catch {
       return !1;
     }
