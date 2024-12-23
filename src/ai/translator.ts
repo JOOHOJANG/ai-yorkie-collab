@@ -57,7 +57,9 @@ _initialized = false
 
     try {
       await this._client.activate();
-      await this._client.attach(this._doc);
+      await this._client.attach(this._doc, {
+        initialPresence: { userId: 'translator' },
+      });
       
       this._initialized = true
     } catch {
